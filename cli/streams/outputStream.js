@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { Writable } = require('stream');
 const { program } = require('commander');
+const exit = process.exit;
 
 function outputStream() {
   if (!program.output) {
@@ -10,12 +11,18 @@ function outputStream() {
   return new Writable({
     objectMode: true,
     write: data => {
-      fs.appendFile(`${__dirname}/${program.output}`, data, err => {
-        process.stdout.write(
-          err
-            ? 'Error: cant access file'
-            : 'The file has been saved successfully!' + '\n'
-        );
+      const path = `${__dirname}/../${program.output}`;
+      fs.access(path, fs.constants.F_OK || fs.constants.W_OK, err => {
+        if (err) {
+          process.stderr.write(
+            'Error: - output file. invalid path or file is protected ' + '\n'
+          );
+          exit(1);
+        } else {
+          fs.appendFile(path, data, () =>
+            process.stdout.write('The file has been saved successfully!' + '\n')
+          );
+        }
       });
     }
   });

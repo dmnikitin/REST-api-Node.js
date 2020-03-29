@@ -12,10 +12,4 @@ program
 
 program.parse(process.argv);
 
-pipeline(inputStream(), transformStream(), outputStream(), err => {
-  if (err) {
-    console.error('Pipeline failed.', err);
-  } else {
-    console.log('Pipeline succeeded.');
-  }
-});
+pipeline(inputStream(), transformStream(), outputStream());
