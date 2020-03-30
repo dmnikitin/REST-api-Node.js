@@ -28,9 +28,7 @@ function inputStream() {
     'no input file passed, but you can still provide a string to encode below: ' +
       '\n'
   );
-  return process.stdin.on('data', data => {
-    process.stdin.read(data);
-  });
+  return process.stdin;
 }
 
 exports.inputStream = inputStream;

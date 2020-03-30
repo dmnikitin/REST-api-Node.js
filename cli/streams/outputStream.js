@@ -1,31 +1,22 @@
 const fs = require('fs');
-const { Writable } = require('stream');
 const { program } = require('commander');
 const exit = process.exit;
 
 function outputStream() {
-  if (!program.output) {
-    return process.stdout;
+  const path = `${__dirname}/../${program.output}`;
+  if (program.output) {
+    fs.access(path, fs.constants.F_OK || fs.constants.W_OK, err => {
+      if (err) {
+        process.stderr.write(
+          'Error: - output file. invalid path or file is protected ' + '\n'
+        );
+        exit(1);
+      } else {
+        return fs.createWriteStream(path, { flags: 'a', encoding: 'utf8' });
+      }
+    });
   }
-
-  return new Writable({
-    objectMode: true,
-    write: data => {
-      const path = `${__dirname}/../${program.output}`;
-      fs.access(path, fs.constants.F_OK || fs.constants.W_OK, err => {
-        if (err) {
-          process.stderr.write(
-            'Error: - output file. invalid path or file is protected ' + '\n'
-          );
-          exit(1);
-        } else {
-          fs.appendFile(path, data, () =>
-            process.stdout.write('The file has been saved successfully!' + '\n')
-          );
-        }
-      });
-    }
-  });
+  return process.stdout;
 }
 
 exports.outputStream = outputStream;

@@ -12,4 +12,6 @@ program
 
 program.parse(process.argv);
 
-pipeline(inputStream(), transformStream(), outputStream());
+pipeline(inputStream(), transformStream(), outputStream(), err => {
+  if (!err) process.stdout.write('Wrote to output file succesfully' + '\n');
+});
