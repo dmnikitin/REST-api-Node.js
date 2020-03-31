@@ -11,10 +11,9 @@ function outputStream() {
           'Error: - output file. invalid path or file is protected ' + '\n'
         );
         exit(1);
-      } else {
-        return fs.createWriteStream(path, { flags: 'a', encoding: 'utf8' });
       }
     });
+    return fs.createWriteStream(path, { flags: 'a', encoding: 'utf8' });
   }
   return process.stdout;
 }
