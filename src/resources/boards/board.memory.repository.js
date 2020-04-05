@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const Board = require('./board.model');
 const mockBoardsArray = Array.from({ length: 3 }, () => new Board());
 
@@ -6,6 +7,13 @@ const mockBoardsArray = Array.from({ length: 3 }, () => new Board());
 const getAll = async () => mockBoardsArray;
 const getBoardById = async id => findElementById(mockBoardsArray, id);
 const addBoard = async board => {
+  if (board.columns && board.columns.length) {
+    board.columns.forEach(column => {
+      if (!column.id) {
+        column.id = uuid();
+      }
+    });
+  }
   mockBoardsArray.push(board);
   return mockBoardsArray[mockBoardsArray.length - 1];
 };

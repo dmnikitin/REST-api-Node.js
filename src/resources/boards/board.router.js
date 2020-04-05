@@ -21,6 +21,7 @@ router.route('/').post(async (req, res) => {
   const board = new Board(req.body);
   try {
     const result = await boardService.addBoard(board);
+    console.log('res', result);
     res.json(result);
   } catch (err) {
     res.status(400).send('Bad request');
