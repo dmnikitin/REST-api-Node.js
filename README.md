@@ -57,4 +57,8 @@ npm run lint
 
 Press <kbd>F5</kbd> to debug.
 
+<<<<<<< HEAD
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+=======
+For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+>>>>>>> template/master
