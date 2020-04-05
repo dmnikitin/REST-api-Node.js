@@ -21,7 +21,6 @@ router.route('/').post(async (req, res) => {
   const board = new Board(req.body);
   try {
     const result = await boardService.addBoard(board);
-    console.log('res', result);
     res.json(result);
   } catch (err) {
     res.status(400).send('Bad request');
@@ -45,6 +44,12 @@ router.route('/:id').delete(async (req, res) => {
   const { id } = req.params;
   try {
     await boardService.deleteBoard(id);
+
+    // const allBoardTasks = await taskService.getAll(id)
+    // allBoardTasks.forEach(task => {
+    //   await taskService.deleteTask(task.id)
+    // });
+
     res.status(204).send('Board was deleted successfully');
   } catch (err) {
     res.status(404).send('Board not found');
