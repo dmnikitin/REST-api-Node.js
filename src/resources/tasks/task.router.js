@@ -25,7 +25,8 @@ router.route('/:id').get(async (req, res) => {
 router.route('/').post(async (req, res) => {
   try {
     const boardId = req.baseUrl.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g)[0];
-    const task = new Task(req.body, boardId);
+    const task = new Task(req.body);
+    task.boardId = boardId;
     const result = await taskService.addTask(task, boardId);
     res.json(result);
   } catch (err) {

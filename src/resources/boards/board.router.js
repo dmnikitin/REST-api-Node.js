@@ -11,6 +11,7 @@ router.route('/:id').get(async (req, res) => {
   const { id } = req.params;
   try {
     const board = await boardService.getBoardById(id);
+    console.log('board', board);
     res.json(board);
   } catch (err) {
     res.status(404).send('Board not found');

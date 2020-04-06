@@ -1,11 +1,15 @@
+const { findIndexById, findElementById } = require('../../helpers/index');
+
 const mockTasksArray = [];
 
-// check for arr length
-
 const getAll = async boardId => {
-  return mockTasksArray.filter(el => {
-    if (el.boardId === boardId) return el;
-  });
+  if (boardId) {
+    return mockTasksArray.filter(el => {
+      console.log(el.boardId, boardId);
+      if (el.boardId === boardId) return el;
+    });
+  }
+  return mockTasksArray;
 };
 
 const getTaskById = async id => findElementById(mockTasksArray, id);
@@ -31,18 +35,6 @@ const deleteTask = async id => {
   } else {
     throw new Error();
   }
-};
-
-const findIndexById = (arr, id) => {
-  return arr.findIndex(el => {
-    if (el.id === id) return el;
-  });
-};
-
-const findElementById = (arr, id) => {
-  return arr.find(el => {
-    if (el.id === id) return el;
-  });
 };
 
 module.exports = { getAll, getTaskById, addTask, updateTask, deleteTask };

@@ -1,7 +1,5 @@
-const User = require('./user.model');
-const mockUsersArray = Array.from({ length: 3 }, () => new User());
-
-// check for arr length
+const { findIndexById, findElementById } = require('../../helpers/index');
+const mockUsersArray = [];
 
 const getAll = async () => mockUsersArray;
 const getUserById = async id => findElementById(mockUsersArray, id);
@@ -25,18 +23,6 @@ const deleteUser = async id => {
   } else {
     throw new Error();
   }
-};
-
-const findIndexById = (arr, id) => {
-  return arr.findIndex(el => {
-    if (el.id === id) return el;
-  });
-};
-
-const findElementById = (arr, id) => {
-  return arr.find(el => {
-    if (el.id === id) return el;
-  });
 };
 
 module.exports = { getAll, getUserById, addUser, updateUser, deleteUser };

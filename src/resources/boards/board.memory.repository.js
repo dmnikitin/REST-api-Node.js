@@ -1,8 +1,6 @@
 const uuid = require('uuid');
-const Board = require('./board.model');
-const mockBoardsArray = Array.from({ length: 3 }, () => new Board());
-
-// check for arr length
+const { findIndexById, findElementById } = require('../../helpers/index');
+const mockBoardsArray = [];
 
 const getAll = async () => mockBoardsArray;
 const getBoardById = async id => findElementById(mockBoardsArray, id);
@@ -33,18 +31,6 @@ const deleteBoard = async id => {
   } else {
     throw new Error();
   }
-};
-
-const findIndexById = (arr, id) => {
-  return arr.findIndex(el => {
-    if (el.id === id) return el;
-  });
-};
-
-const findElementById = (arr, id) => {
-  return arr.find(el => {
-    if (el.id === id) return el;
-  });
 };
 
 module.exports = { getAll, getBoardById, addBoard, updateBoard, deleteBoard };
