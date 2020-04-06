@@ -3,7 +3,7 @@ const { findIndexById, findElementById } = require('../../helpers/index');
 const mockBoardsArray = [];
 
 const getAll = async () => mockBoardsArray;
-const getBoardById = async id => findElementById(mockBoardsArray, id);
+const getById = async id => findElementById(mockBoardsArray, id);
 const addBoard = async board => {
   if (board.columns && board.columns.length) {
     board.columns.forEach(column => {
@@ -33,4 +33,4 @@ const deleteBoard = async id => {
   }
 };
 
-module.exports = { getAll, getBoardById, addBoard, updateBoard, deleteBoard };
+module.exports = { getAll, getById, addBoard, updateBoard, deleteBoard };

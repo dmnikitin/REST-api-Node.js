@@ -5,7 +5,6 @@ const mockTasksArray = [];
 const getAll = async boardId => {
   if (boardId) {
     return mockTasksArray.filter(el => {
-      console.log(el.boardId, boardId);
       if (el.boardId === boardId) return el;
     });
   }
