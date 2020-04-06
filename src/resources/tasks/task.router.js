@@ -1,10 +1,10 @@
-const router = require('express').Router();
+const router = require('express').Router({ mergeParams: true });
 const Task = require('./task.model');
 const taskService = require('./task.service');
 
 router.route('/').get(async (req, res) => {
   try {
-    const boardId = req.baseUrl.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g)[0];
+    const boardId = req.params.id;
     const tasks = await taskService.getAll(boardId);
     res.json(tasks);
   } catch (err) {
@@ -12,11 +12,10 @@ router.route('/').get(async (req, res) => {
   }
 });
 
-router.route('/:id').get(async (req, res) => {
+router.route('/:taskId').get(async (req, res) => {
   try {
-    const { id } = req.params;
-    const boardId = req.baseUrl.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g)[0];
-    const task = await taskService.getById(boardId, id);
+    const { id, taskId } = req.params;
+    const task = await taskService.getById(id, taskId);
     res.json(task);
   } catch (err) {
     res.status(404).send('Task not found');
@@ -25,7 +24,7 @@ router.route('/:id').get(async (req, res) => {
 
 router.route('/').post(async (req, res) => {
   try {
-    const boardId = req.baseUrl.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g)[0];
+    const boardId = req.params.id;
     const task = new Task(req.body);
     task.boardId = boardId;
     const result = await taskService.addTask(task, boardId);
