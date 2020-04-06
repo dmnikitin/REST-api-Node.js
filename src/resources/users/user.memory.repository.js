@@ -1,13 +1,21 @@
 const { findIndexById, findElementById } = require('../../helpers/index');
 const mockUsersArray = [];
 
-const getAll = async () => mockUsersArray;
-const getUserById = async id => findElementById(mockUsersArray, id);
-const addUser = async user => {
+const getAll = () => mockUsersArray;
+
+const getUserById = id => {
+  const x = findElementById(mockUsersArray, id);
+  if (x) {
+    return x;
+  }
+  throw new Error();
+};
+
+const addUser = user => {
   mockUsersArray.push(user);
   return mockUsersArray[mockUsersArray.length - 1];
 };
-const updateUser = async (id, update) => {
+const updateUser = (id, update) => {
   const index = findIndexById(mockUsersArray, id);
   if (index !== -1) {
     const updatedElement = Object.assign({}, mockUsersArray[index], update);
@@ -16,7 +24,7 @@ const updateUser = async (id, update) => {
   }
   throw new Error();
 };
-const deleteUser = async id => {
+const deleteUser = id => {
   const index = findIndexById(mockUsersArray, id);
   if (index !== -1) {
     mockUsersArray.splice(index, 1);

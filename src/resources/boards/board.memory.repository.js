@@ -1,17 +1,17 @@
-const uuid = require('uuid');
 const { findIndexById, findElementById } = require('../../helpers/index');
 const mockBoardsArray = [];
 
-const getAll = async () => mockBoardsArray;
-const getById = async id => findElementById(mockBoardsArray, id);
-const addBoard = async board => {
-  if (board.columns && board.columns.length) {
-    board.columns.forEach(column => {
-      if (!column.id) {
-        column.id = uuid();
-      }
-    });
+const getAll = () => mockBoardsArray;
+
+const getById = id => {
+  const x = findElementById(mockBoardsArray, id);
+  if (x) {
+    return x;
   }
+  throw new Error();
+};
+
+const addBoard = async board => {
   mockBoardsArray.push(board);
   return mockBoardsArray[mockBoardsArray.length - 1];
 };

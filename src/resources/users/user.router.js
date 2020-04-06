@@ -44,11 +44,6 @@ router.route('/:id').delete(async (req, res) => {
   const { id } = req.params;
   try {
     await usersService.deleteUser(id);
-
-    // take all boards ID's ids = []
-    // ids.map => getAlltasks
-    // ids.forEach(  id => id.forEach ( task => if (task.id === id) { taskService.deleteTask(id)} ) )
-
     res.status(204).send('User was deleted successfully');
   } catch (err) {
     res.status(404).send('User not found');

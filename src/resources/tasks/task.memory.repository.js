@@ -2,7 +2,7 @@ const { findIndexById, findElementById } = require('../../helpers/index');
 
 const mockTasksArray = [];
 
-const getAll = async boardId => {
+const getAll = boardId => {
   if (boardId) {
     return mockTasksArray.filter(el => {
       if (el.boardId === boardId) return el;
@@ -11,14 +11,20 @@ const getAll = async boardId => {
   return mockTasksArray;
 };
 
-const getTaskById = async id => findElementById(mockTasksArray, id);
+const getById = (bd, id) => {
+  const x = findElementById(mockTasksArray, id);
+  if (x) {
+    return x;
+  }
+  throw new Error();
+};
 
-const addTask = async task => {
+const addTask = task => {
   mockTasksArray.push(task);
   return mockTasksArray[mockTasksArray.length - 1];
 };
 
-const updateTask = async (id, update) => {
+const updateTask = (id, update) => {
   const index = findIndexById(mockTasksArray, id);
   if (index !== -1) {
     const updatedElement = Object.assign({}, mockTasksArray[index], update);
@@ -27,13 +33,15 @@ const updateTask = async (id, update) => {
   }
   throw new Error();
 };
-const deleteTask = async id => {
-  const index = findIndexById(mockTasksArray, id);
-  if (index !== -1) {
-    mockTasksArray.splice(index, 1);
-  } else {
-    throw new Error();
+const deleteTask = id => {
+  try {
+    const index = findIndexById(mockTasksArray, id);
+    if (index !== -1) {
+      mockTasksArray.splice(index, 1);
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
-module.exports = { getAll, getTaskById, addTask, updateTask, deleteTask };
+module.exports = { getAll, getById, addTask, updateTask, deleteTask };

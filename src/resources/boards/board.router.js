@@ -44,12 +44,6 @@ router.route('/:id').delete(async (req, res) => {
   const { id } = req.params;
   try {
     await boardService.deleteBoard(id);
-
-    // const allBoardTasks = await taskService.getAll(id)
-    // allBoardTasks.forEach(task => {
-    //   await taskService.deleteTask(task.id)
-    // });
-
     res.status(204).send('Board was deleted successfully');
   } catch (err) {
     res.status(404).send('Board not found');

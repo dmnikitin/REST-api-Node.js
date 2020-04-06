@@ -15,7 +15,8 @@ router.route('/').get(async (req, res) => {
 router.route('/:id').get(async (req, res) => {
   try {
     const { id } = req.params;
-    const task = await taskService.getTaskById(id);
+    const boardId = req.baseUrl.match(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/g)[0];
+    const task = await taskService.getById(boardId, id);
     res.json(task);
   } catch (err) {
     res.status(404).send('Task not found');
