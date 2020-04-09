@@ -1,4 +1,4 @@
-const { findIndexById, findElementById } = require('../../helpers/index');
+const { findIndexById, findElementById } = require('../../helpers/find');
 const mockUsersArray = [];
 
 const getAll = () => mockUsersArray;
