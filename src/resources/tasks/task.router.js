@@ -1,59 +1,68 @@
 const router = require('express').Router({ mergeParams: true });
-const Task = require('./task.model');
 const taskService = require('./task.service');
+const Task = require('./task.model');
+const ExtendedError = require('../../helpers/error-extended');
 
-router.route('/').get(async (req, res) => {
+router.route('/').get(async (req, res, next) => {
   try {
     const boardId = req.params.id;
     const tasks = await taskService.getAll(boardId);
-    res.json(tasks);
+    if (tasks) res.json(tasks);
+    throw new ExtendedError(404, 'Bad request');
   } catch (err) {
-    res.status(404).send('Task not found');
+    return next(err);
   }
 });
 
-router.route('/:taskId').get(async (req, res) => {
+router.route('/:taskId').get(async (req, res, next) => {
   try {
     const { id, taskId } = req.params;
     const task = await taskService.getById(id, taskId);
-    res.json(task);
+    console.log('task', task);
+    if (task) res.json(task);
+    throw new ExtendedError(404, 'Task not found');
   } catch (err) {
-    res.status(404).send('Task not found');
+    return next(err);
   }
 });
 
-router.route('/').post(async (req, res) => {
+router.route('/').post(async (req, res, next) => {
   try {
     const boardId = req.params.id;
     const task = new Task(req.body);
-    task.boardId = boardId;
-    const result = await taskService.addTask(task, boardId);
-    res.json(result);
+    if (task) {
+      task.boardId = boardId;
+      const result = await taskService.addTask(task, boardId);
+      res.json(result);
+    }
+    throw new ExtendedError(400, 'Bad request');
   } catch (err) {
-    res.status(400).send('Bad request');
+    return next(err);
   }
 });
 
-router.route('/:id').put(async (req, res) => {
-  const {
-    body: update,
-    params: { id }
-  } = req;
+router.route('/:id').put(async (req, res, next) => {
   try {
+    const {
+      body: update,
+      params: { id }
+    } = req;
     const result = await taskService.updateTask(id, update);
-    res.json(result);
+    if (result) res.json(result);
+    throw new ExtendedError(400, 'Bad request');
   } catch (err) {
-    res.status(400).send('Bad request');
+    return next(err);
   }
 });
 
-router.route('/:id').delete(async (req, res) => {
-  const { id } = req.params;
+router.route('/:id').delete(async (req, res, next) => {
   try {
-    await taskService.deleteTask(id);
-    res.status(204).send('Task was deleted successfully');
+    const { id } = req.params;
+    const isSuccess = await taskService.deleteTask(id);
+    if (isSuccess) res.status(204).end();
+    throw new ExtendedError(404, 'Task not found');
   } catch (err) {
-    res.status(404).send('Task not found');
+    return next(err);
   }
 });
 

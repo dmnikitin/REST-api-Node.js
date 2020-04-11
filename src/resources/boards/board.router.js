@@ -1,52 +1,63 @@
 const router = require('express').Router();
-const Board = require('./board.model');
 const boardService = require('./board.service');
+const Board = require('./board.model');
+const ExtendedError = require('../../helpers/error-extended');
 
-router.route('/').get(async (req, res) => {
-  const boards = await boardService.getAll();
-  res.json(boards);
+router.route('/').get(async (req, res, next) => {
+  try {
+    const boards = await boardService.getAll();
+    res.json(boards);
+  } catch (err) {
+    return next(err);
+  }
 });
 
-router.route('/:id').get(async (req, res) => {
-  const { id } = req.params;
+router.route('/:id').get(async (req, res, next) => {
   try {
+    const { id } = req.params;
     const board = await boardService.getById(id);
-    res.json(board);
+    if (board) res.json(board);
+    throw new ExtendedError(404, 'Board not found');
   } catch (err) {
-    res.status(404).send('Board not found');
+    return next(err);
   }
 });
 
-router.route('/').post(async (req, res) => {
-  const board = new Board(req.body);
+router.route('/').post(async (req, res, next) => {
   try {
-    const result = await boardService.addBoard(board);
-    res.json(result);
+    const board = new Board(req.body);
+    if (board) {
+      const result = await boardService.addBoard(board);
+      res.json(result);
+    }
+    throw new ExtendedError(400, 'Bad request');
   } catch (err) {
-    res.status(400).send('Bad request');
+    return next(err);
   }
 });
 
-router.route('/:id').put(async (req, res) => {
-  const {
-    body: update,
-    params: { id }
-  } = req;
+router.route('/:id').put(async (req, res, next) => {
   try {
+    const {
+      body: update,
+      params: { id }
+    } = req;
     const result = await boardService.updateBoard(id, update);
-    res.json(result);
+    if (result) res.json(result);
+    throw new ExtendedError(400, 'Bad request');
   } catch (err) {
-    res.status(400).send('Bad request');
+    return next(err);
   }
 });
 
-router.route('/:id').delete(async (req, res) => {
-  const { id } = req.params;
+router.route('/:id').delete(async (req, res, next) => {
   try {
-    await boardService.deleteBoard(id);
-    res.status(204).send('Board was deleted successfully');
+    const { id } = req.params;
+    const isSuccess = await boardService.deleteBoard(id);
+    if (isSuccess) res.status(204).send('Board was deleted successfully');
+    throw new ExtendedError(404, 'Board not found');
   } catch (err) {
-    res.status(404).send('Board not found');
+    return next(err);
   }
 });
 
