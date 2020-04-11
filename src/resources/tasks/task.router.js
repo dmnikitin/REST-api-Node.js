@@ -1,6 +1,7 @@
 const router = require('express').Router({ mergeParams: true });
 const taskService = require('./task.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
+const validator = require('./../../helpers/validator');
 const ExtendedError = require('../../helpers/error-extended');
 const Task = require('./task.model');
 
@@ -16,9 +17,11 @@ router.route('/').get(
 router.route('/:taskId').get(
   catchErrorsDecorator(async (req, res) => {
     const { id, taskId } = req.params;
-    const task = await taskService.getById(id, taskId);
-    if (task) res.json(task);
-    throw new ExtendedError(404, 'Task not found');
+    if (validator(id)) {
+      const task = await taskService.getById(id, taskId);
+      if (task) res.json(task);
+      throw new ExtendedError(404, 'Task not found');
+    }
   })
 );
 
@@ -41,18 +44,22 @@ router.route('/:id').put(
       body: update,
       params: { id }
     } = req;
-    const result = await taskService.updateTask(id, update);
-    if (result) res.json(result);
-    throw new ExtendedError(400, 'Bad request');
+    if (validator(id)) {
+      const result = await taskService.updateTask(id, update);
+      if (result) res.json(result);
+      throw new ExtendedError(400, 'Bad request');
+    }
   })
 );
 
 router.route('/:id').delete(
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
-    const isSuccess = await taskService.deleteTask(id);
-    if (isSuccess) res.status(204).send('Task deleted successfully');
-    throw new ExtendedError(404, 'Task not found');
+    if (validator(id)) {
+      const isSuccess = await taskService.deleteTask(id);
+      if (isSuccess) res.status(204).send('Task deleted successfully');
+      throw new ExtendedError(404, 'Task not found');
+    }
   })
 );
 

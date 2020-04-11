@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const usersService = require('./user.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
+const validator = require('./../../helpers/validator');
 const ExtendedError = require('../../helpers/error-extended');
 const User = require('./user.model');
 
@@ -14,9 +15,11 @@ router.route('/').get(
 router.route('/:id').get(
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
-    const user = await usersService.getUserById(id);
-    if (user) res.json(User.toResponse(user));
-    throw new ExtendedError(404, 'User not found');
+    if (validator(id)) {
+      const user = await usersService.getUserById(id);
+      if (user) res.json(User.toResponse(user));
+      throw new ExtendedError(404, 'User not found');
+    }
   })
 );
 
@@ -37,18 +40,22 @@ router.route('/:id').put(
       body: update,
       params: { id }
     } = req;
-    const result = await usersService.updateUser(id, update);
-    if (result) res.json(User.toResponse(result));
-    throw new ExtendedError(400, 'Bad request');
+    if (validator(id)) {
+      const result = await usersService.updateUser(id, update);
+      if (result) res.json(User.toResponse(result));
+      throw new ExtendedError(400, 'Bad request');
+    }
   })
 );
 
 router.route('/:id').delete(
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
-    const isSuccess = await usersService.deleteUser(id);
-    if (isSuccess) res.status(204).send('User was deleted successfully');
-    throw new ExtendedError(404, 'user not found');
+    if (validator(id)) {
+      const isSuccess = await usersService.deleteUser(id);
+      if (isSuccess) res.status(204).send('User was deleted successfully');
+      throw new ExtendedError(404, 'user not found');
+    }
   })
 );
 

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const boardService = require('./board.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
+const validator = require('./../../helpers/validator');
 const ExtendedError = require('../../helpers/error-extended');
 const Board = require('./board.model');
 
@@ -14,9 +15,11 @@ router.route('/').get(
 router.route('/:id').get(
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
-    const board = await boardService.getById(id);
-    if (board) res.json(board);
-    throw new ExtendedError(404, 'Board not found');
+    if (validator(id)) {
+      const board = await boardService.getById(id);
+      if (board) res.json(board);
+      throw new ExtendedError(404, 'Board not found');
+    }
   })
 );
 
@@ -37,18 +40,22 @@ router.route('/:id').put(
       body: update,
       params: { id }
     } = req;
-    const result = await boardService.updateBoard(id, update);
-    if (result) res.json(result);
-    throw new ExtendedError(400, 'Bad request');
+    if (validator(id)) {
+      const result = await boardService.updateBoard(id, update);
+      if (result) res.json(result);
+      throw new ExtendedError(400, 'Bad request');
+    }
   })
 );
 
 router.route('/:id').delete(
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
-    const isSuccess = await boardService.deleteBoard(id);
-    if (isSuccess) res.status(204).send('Board was deleted successfully');
-    throw new ExtendedError(404, 'Board not found');
+    if (validator(id)) {
+      const isSuccess = await boardService.deleteBoard(id);
+      if (isSuccess) res.status(204).send('Board was deleted successfully');
+      throw new ExtendedError(404, 'Board not found');
+    }
   })
 );
 
