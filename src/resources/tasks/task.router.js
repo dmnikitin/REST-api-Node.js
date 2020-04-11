@@ -18,7 +18,6 @@ router.route('/:taskId').get(async (req, res, next) => {
   try {
     const { id, taskId } = req.params;
     const task = await taskService.getById(id, taskId);
-    console.log('task', task);
     if (task) res.json(task);
     throw new ExtendedError(404, 'Task not found');
   } catch (err) {

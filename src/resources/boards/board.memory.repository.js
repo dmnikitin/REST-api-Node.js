@@ -4,8 +4,8 @@ const mockBoardsArray = [];
 const getAll = () => mockBoardsArray;
 
 const getById = id => {
-  const x = findElementById(mockBoardsArray, id);
-  return x ? x : null;
+  const element = findElementById(mockBoardsArray, id);
+  return element ? element : null;
 };
 
 const addBoard = async board => {

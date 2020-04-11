@@ -12,9 +12,8 @@ const getAll = boardId => {
 };
 
 const getById = (bd, id) => {
-  const x = findElementById(mockTasksArray, id);
-  console.log('getById -> x', x);
-  return x ? x : null;
+  const element = findElementById(mockTasksArray, id);
+  return element ? element : null;
 };
 
 const addTask = task => {
