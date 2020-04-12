@@ -2,7 +2,7 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
-const logger = require('./common/winston-config');
+const { errorLogger } = require('./common/winston-config');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
@@ -34,13 +34,13 @@ boardRouter.use('/:id/tasks', taskRouter);
 app.use(errorMiddleware);
 
 process.on('uncaughtException', err => {
-  logger.error({ statusCode: 500, message: err.message });
+  errorLogger.error({ statusCode: 500, message: err.message });
   const exit = process.exit;
   exit(1);
 });
 
 process.on('unhandledRejection', reason => {
-  logger.error({ statusCode: 500, message: reason });
+  errorLogger.error({ statusCode: 500, message: reason.message });
 });
 
 module.exports = app;
