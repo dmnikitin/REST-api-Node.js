@@ -17,8 +17,8 @@ router.route('/:id').get(
     const { id } = req.params;
     if (validator(id)) {
       const board = await boardService.getById(id);
-      if (board) res.json(board);
-      throw new ExtendedError(404, 'Board not found');
+      if (!board) throw new ExtendedError(404, 'Board not found');
+      res.json(board);
     }
   })
 );
@@ -26,11 +26,9 @@ router.route('/:id').get(
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
     const board = new Board(req.body);
-    if (board) {
-      const result = await boardService.addBoard(board);
-      res.json(result);
-    }
-    throw new ExtendedError(400, 'Bad request');
+    if (!board) throw new ExtendedError(400, 'Bad request');
+    const result = await boardService.addBoard(board);
+    res.json(result);
   })
 );
 
@@ -42,8 +40,8 @@ router.route('/:id').put(
     } = req;
     if (validator(id)) {
       const result = await boardService.updateBoard(id, update);
-      if (result) res.json(result);
-      throw new ExtendedError(400, 'Bad request');
+      if (!result) throw new ExtendedError(400, 'Bad request');
+      res.json(result);
     }
   })
 );
@@ -53,8 +51,8 @@ router.route('/:id').delete(
     const { id } = req.params;
     if (validator(id)) {
       const isSuccess = await boardService.deleteBoard(id);
-      if (isSuccess) res.status(204).send('Board was deleted successfully');
-      throw new ExtendedError(404, 'Board not found');
+      if (!isSuccess) throw new ExtendedError(404, 'Board not found');
+      res.status(204).send('Board was deleted successfully');
     }
   })
 );

@@ -17,8 +17,8 @@ router.route('/:id').get(
     const { id } = req.params;
     if (validator(id)) {
       const user = await usersService.getUserById(id);
-      if (user) res.json(User.toResponse(user));
-      throw new ExtendedError(404, 'User not found');
+      if (!user) throw new ExtendedError(404, 'User not found');
+      res.json(User.toResponse(user));
     }
   })
 );
@@ -26,11 +26,9 @@ router.route('/:id').get(
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
     const user = new User(req.body);
-    if (user) {
-      const result = await usersService.addUser(user);
-      res.json(User.toResponse(result));
-    }
-    throw new ExtendedError(400, 'Bad request');
+    if (!user) throw new ExtendedError(400, 'Bad request');
+    const result = await usersService.addUser(user);
+    res.json(User.toResponse(result));
   })
 );
 
@@ -42,8 +40,8 @@ router.route('/:id').put(
     } = req;
     if (validator(id)) {
       const result = await usersService.updateUser(id, update);
-      if (result) res.json(User.toResponse(result));
-      throw new ExtendedError(400, 'Bad request');
+      if (!result) throw new ExtendedError(400, 'Bad request');
+      res.json(User.toResponse(result));
     }
   })
 );
@@ -53,8 +51,8 @@ router.route('/:id').delete(
     const { id } = req.params;
     if (validator(id)) {
       const isSuccess = await usersService.deleteUser(id);
-      if (isSuccess) res.status(204).send('User was deleted successfully');
-      throw new ExtendedError(404, 'user not found');
+      if (!isSuccess) throw new ExtendedError(404, 'User not found');
+      res.status(204).send('User was deleted successfully');
     }
   })
 );

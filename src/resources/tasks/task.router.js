@@ -9,8 +9,8 @@ router.route('/').get(
   catchErrorsDecorator(async (req, res) => {
     const boardId = req.params.id;
     const tasks = await taskService.getAll(boardId);
-    if (tasks) res.json(tasks);
-    throw new ExtendedError(404, 'Bad request');
+    if (!tasks) throw new ExtendedError(404, 'Bad request');
+    res.json(tasks);
   })
 );
 
@@ -19,8 +19,8 @@ router.route('/:taskId').get(
     const { id, taskId } = req.params;
     if (validator(id)) {
       const task = await taskService.getById(id, taskId);
-      if (task) res.json(task);
-      throw new ExtendedError(404, 'Task not found');
+      if (!task) throw new ExtendedError(404, 'Task not found');
+      res.json(task);
     }
   })
 );
@@ -29,12 +29,10 @@ router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
     const boardId = req.params.id;
     const task = new Task(req.body);
-    if (task) {
-      task.boardId = boardId;
-      const result = await taskService.addTask(task, boardId);
-      res.json(result);
-    }
-    throw new ExtendedError(400, 'Bad request');
+    if (!task) throw new ExtendedError(400, 'Bad request');
+    task.boardId = boardId;
+    const result = await taskService.addTask(task, boardId);
+    res.json(result);
   })
 );
 
@@ -46,8 +44,8 @@ router.route('/:id').put(
     } = req;
     if (validator(id)) {
       const result = await taskService.updateTask(id, update);
-      if (result) res.json(result);
-      throw new ExtendedError(400, 'Bad request');
+      if (!result) throw new ExtendedError(400, 'Bad request');
+      res.json(result);
     }
   })
 );
@@ -57,8 +55,8 @@ router.route('/:id').delete(
     const { id } = req.params;
     if (validator(id)) {
       const isSuccess = await taskService.deleteTask(id);
-      if (isSuccess) res.status(204).send('Task deleted successfully');
-      throw new ExtendedError(404, 'Task not found');
+      if (!isSuccess) throw new ExtendedError(404, 'Task not found');
+      res.status(204).send('Task was deleted successfully');
     }
   })
 );
