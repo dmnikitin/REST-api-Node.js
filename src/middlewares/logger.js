@@ -1,7 +1,7 @@
-const logger = require('../common/winston-config');
+const { infoLogger } = require('../common/winston-config');
 
 const loggerMiddleware = (req, res, next) => {
-  logger.log(
+  infoLogger.log(
     'info',
     `url: ${req.url}, query params: ${JSON.stringify(
       req.query
