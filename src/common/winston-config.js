@@ -24,4 +24,4 @@ const infoLogger = createLogger({
   ]
 });
 
-module.exports = { errorLogger, infoLogger };
+module.exports = { infoLogger, errorLogger };

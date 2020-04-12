@@ -6,7 +6,6 @@ const { errorLogger } = require('./common/winston-config');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
-const errorMiddleware = require('./middlewares/error');
 const loggerMiddleware = require('./middlewares/logger');
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -23,15 +22,13 @@ app.use('/', (req, res, next) => {
   next();
 });
 
-// writes logs to ./info.log
-app.use(loggerMiddleware);
+app.use((req, res, next) => loggerMiddleware(null, req, res, next));
 
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:id/tasks', taskRouter);
 
-// writes errors to ./error.log
-app.use(errorMiddleware);
+app.use(loggerMiddleware);
 
 process.on('uncaughtException', err => {
   errorLogger.error({ statusCode: 500, message: err.message });
