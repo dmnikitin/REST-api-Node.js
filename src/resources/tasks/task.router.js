@@ -1,7 +1,7 @@
 const router = require('express').Router({ mergeParams: true });
 const taskService = require('./task.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
-const validator = require('./../../middlewares/validator');
+const validatorMiddleware = require('./../../middlewares/validator');
 const ExtendedError = require('../../helpers/error-extended');
 const Task = require('./task.model');
 
@@ -15,7 +15,7 @@ router.route('/').get(
 );
 
 router.route('/:taskId').get(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id, taskId } = req.params;
     const task = await taskService.getById(id, taskId);
@@ -36,7 +36,7 @@ router.route('/').post(
 );
 
 router.route('/:id').put(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const {
       body: update,
@@ -49,7 +49,7 @@ router.route('/:id').put(
 );
 
 router.route('/:id').delete(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
     const isSuccess = await taskService.deleteTask(id);

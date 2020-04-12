@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const usersService = require('./user.service');
-const validator = require('../../middlewares/validator');
+const validatorMiddleware = require('../../middlewares/validator');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
 const ExtendedError = require('../../helpers/error-extended');
 const User = require('./user.model');
@@ -13,7 +13,7 @@ router.route('/').get(
 );
 
 router.route('/:id').get(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
     const user = await usersService.getUserById(id);
@@ -32,7 +32,7 @@ router.route('/').post(
 );
 
 router.route('/:id').put(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const {
       body: update,
@@ -45,7 +45,7 @@ router.route('/:id').put(
 );
 
 router.route('/:id').delete(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
     const isSuccess = await usersService.deleteUser(id);

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const boardService = require('./board.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
-const validator = require('./../../middlewares/validator');
+const validatorMiddleware = require('./../../middlewares/validator');
 const ExtendedError = require('../../helpers/error-extended');
 const Board = require('./board.model');
 
@@ -13,7 +13,7 @@ router.route('/').get(
 );
 
 router.route('/:id').get(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id } = req.params;
     const board = await boardService.getById(id);
@@ -32,7 +32,7 @@ router.route('/').post(
 );
 
 router.route('/:id').put(
-  validator,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const {
       body: update,
