@@ -1,3 +1,5 @@
+# RS School REST service
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -18,12 +20,45 @@ npm install
 ## Running application
 
 ```
-node cli/my_caesar_cli.js 
+npm start
 ```
 
-## Commands
+After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-* required:  '-a, --actiontype <type>'  - action type: encode or decode (example: -a encode)
-* required: '-s, --shift <type>', shift number (example: -s 7)
-* optional: '-i, --input <type>', path to input file (example: -i './input.txt)
-* optional: '-o, --output <type>', path to output file (example: -o './output.txt)
+## Testing
+
+After application running open new terminal and enter:
+
+To test without authorization
+
+```
+npm test
+```
+
+To test with authorization
+
+```
+npm run test:auth
+```
+
+## Development
+
+If you're using VSCode, you can get a better developer experience from integration with [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extensions.
+
+### Auto-fix and format
+
+```
+npm run lint
+```
+
+### Debugging in VSCode
+
+Press <kbd>F5</kbd> to debug.
+
+<<<<<<< HEAD
+For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+=======
+For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+>>>>>>> template/master
