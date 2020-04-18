@@ -1,60 +1,61 @@
 const router = require('express').Router({ mergeParams: true });
-const Task = require('./task.model');
 const taskService = require('./task.service');
+const catchErrorsDecorator = require('../../helpers/error-decorator');
+const validatorMiddleware = require('./../../middlewares/validator');
+const ExtendedError = require('../../helpers/error-extended');
+const Task = require('./task.model');
 
-router.route('/').get(async (req, res) => {
-  try {
+router.route('/').get(
+  catchErrorsDecorator(async (req, res) => {
     const boardId = req.params.id;
     const tasks = await taskService.getAll(boardId);
+    if (!tasks) throw new ExtendedError(404, 'Bad request');
     res.json(tasks);
-  } catch (err) {
-    res.status(404).send('Task not found');
-  }
-});
+  })
+);
 
-router.route('/:taskId').get(async (req, res) => {
-  try {
+router.route('/:taskId').get(
+  validatorMiddleware,
+  catchErrorsDecorator(async (req, res) => {
     const { id, taskId } = req.params;
     const task = await taskService.getById(id, taskId);
+    if (!task) throw new ExtendedError(404, 'Task not found');
     res.json(task);
-  } catch (err) {
-    res.status(404).send('Task not found');
-  }
-});
+  })
+);
 
-router.route('/').post(async (req, res) => {
-  try {
+router.route('/').post(
+  catchErrorsDecorator(async (req, res) => {
     const boardId = req.params.id;
     const task = new Task(req.body);
+    if (!task) throw new ExtendedError(400, 'Bad request');
     task.boardId = boardId;
     const result = await taskService.addTask(task, boardId);
     res.json(result);
-  } catch (err) {
-    res.status(400).send('Bad request');
-  }
-});
+  })
+);
 
-router.route('/:id').put(async (req, res) => {
-  const {
-    body: update,
-    params: { id }
-  } = req;
-  try {
+router.route('/:id').put(
+  validatorMiddleware,
+  catchErrorsDecorator(async (req, res) => {
+    const {
+      body: update,
+      params: { id }
+    } = req;
     const result = await taskService.updateTask(id, update);
+    if (!result) throw new ExtendedError(400, 'Bad request');
     res.json(result);
-  } catch (err) {
-    res.status(400).send('Bad request');
-  }
-});
+  })
+);
 
-router.route('/:id').delete(async (req, res) => {
-  const { id } = req.params;
-  try {
-    await taskService.deleteTask(id);
+router.route('/:id').delete(
+  validatorMiddleware,
+  catchErrorsDecorator(async (req, res) => {
+    const { id } = req.params;
+    const isSuccess = await taskService.deleteTask(id);
+    if (!isSuccess) throw new ExtendedError(404, 'Task not found');
     res.status(204).send('Task was deleted successfully');
-  } catch (err) {
-    res.status(404).send('Task not found');
-  }
-});
+  })
+);
 
 module.exports = router;

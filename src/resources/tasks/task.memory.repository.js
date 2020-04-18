@@ -1,4 +1,4 @@
-const { findIndexById, findElementById } = require('../../helpers/index');
+const { findIndexById, findElementById } = require('../../helpers/find');
 
 const mockTasksArray = [];
 
@@ -12,11 +12,8 @@ const getAll = boardId => {
 };
 
 const getById = (bd, id) => {
-  const x = findElementById(mockTasksArray, id);
-  if (x) {
-    return x;
-  }
-  throw new Error();
+  const element = findElementById(mockTasksArray, id);
+  return element ? element : null;
 };
 
 const addTask = task => {
@@ -31,17 +28,16 @@ const updateTask = (id, update) => {
     mockTasksArray.splice(index, 1, updatedElement);
     return mockTasksArray[index];
   }
-  throw new Error();
+  return false;
 };
+
 const deleteTask = id => {
-  try {
-    const index = findIndexById(mockTasksArray, id);
-    if (index !== -1) {
-      mockTasksArray.splice(index, 1);
-    }
-  } catch (err) {
-    console.log(err);
+  const index = findIndexById(mockTasksArray, id);
+  if (index !== -1 && mockTasksArray.length) {
+    mockTasksArray.splice(index, 1);
+    return true;
   }
+  return false;
 };
 
 module.exports = { getAll, getById, addTask, updateTask, deleteTask };

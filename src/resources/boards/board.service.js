@@ -3,7 +3,11 @@ const taskService = require('../tasks/task.service');
 const uuid = require('uuid');
 
 const getAll = () => boardsRepo.getAll();
+
 const getById = id => boardsRepo.getById(id);
+
+const updateBoard = (id, update) => boardsRepo.updateBoard(id, update);
+
 const addBoard = board => {
   if (board.columns && board.columns.length) {
     board.columns.forEach(column => {
@@ -14,23 +18,18 @@ const addBoard = board => {
   }
   return boardsRepo.addBoard(board);
 };
-const updateBoard = (id, update) => boardsRepo.updateBoard(id, update);
+
 const deleteBoard = async id => {
-  try {
+  const isSuccess = await boardsRepo.deleteBoard(id);
+  if (isSuccess) {
     const boardTasks = await taskService.getAll(id);
-    if (boardTasks.length) {
-      boardTasks.forEach(async task => {
-        try {
-          await taskService.deleteTask(task.id);
-        } catch (err) {
-          console.log(err);
-        }
-      });
+    if (boardTasks && boardTasks.length) {
+      await Promise.all(
+        boardTasks.map(task => taskService.deleteTask(task.id))
+      );
     }
-    return boardsRepo.deleteBoard(id);
-  } catch (err) {
-    console.log(err);
   }
+  return isSuccess;
 };
 
 module.exports = { getAll, getById, addBoard, updateBoard, deleteBoard };
