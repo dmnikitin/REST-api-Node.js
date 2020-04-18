@@ -1,4 +1,5 @@
 const router = require('express').Router({ mergeParams: true });
+const uuid = require('uuid');
 const taskService = require('./task.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
 const validatorMiddleware = require('./../../middlewares/validator');
@@ -26,10 +27,18 @@ router.route('/:taskId').get(
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    const boardId = req.params.id;
-    const task = new Task(req.body);
+    const { title, order, description, userId, columnId } = req.body;
+    const { id: boardId } = req.params;
+    const task = new Task({
+      id: uuid(),
+      title,
+      order,
+      description,
+      userId,
+      boardId,
+      columnId
+    });
     if (!task) throw new ExtendedError(400, 'Bad request');
-    task.boardId = boardId;
     const result = await taskService.addTask(task, boardId);
     res.json(result);
   })
