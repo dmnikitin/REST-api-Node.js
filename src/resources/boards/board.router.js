@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const uuid = require('uuid');
 const boardService = require('./board.service');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
 const validatorMiddleware = require('./../../middlewares/validator');
@@ -25,12 +24,8 @@ router.route('/:id').get(
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    const { columns, title } = req.body;
-    const board = new Board({
-      id: uuid(),
-      columns,
-      title
-    });
+    // const { columns, title } = req.body;
+    const board = new Board(req.body);
     if (!board) throw new ExtendedError(400, 'Bad request');
     const result = await boardService.addBoard(board);
     res.json(result);
