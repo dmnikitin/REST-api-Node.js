@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,26 +17,25 @@ userSchema.statics.toResponse = user => {
   return { id, name, login };
 };
 
-// const saltRounds = 10;
+const saltRounds = 10;
 
-// userSchema.pre('save', function(next) {
-//     // Check if document is new or a new password has been set
-//     if (this.isNew || this.isModified('password')) {
-//         // Saving reference to this because of changing scopes
-//         const document = this;
-//         bcrypt.hash(document.password, saltRounds,
-//             function(err, hashedPassword) {
-//                 if (err) {
-//                     next(err);
-//                 } else {
-//                     document.password = hashedPassword;
-//                     next();
-//                 }
-//             });
-//     } else {
-//         next();
-//     }
-// });
+function hash(next) {
+  if (this.isNew || this.isModified('password')) {
+    // Saving reference to this because of changing scopes
+    const document = this;
+    bcrypt.hash(document.password, saltRounds, (err, hashedPassword) => {
+      if (err) {
+        return next(err);
+      }
+      document.password = hashedPassword;
+      return next();
+    });
+  } else {
+    return next();
+  }
+}
+
+userSchema.pre('save', hash);
 
 const User = mongoose.model('User', userSchema);
 
