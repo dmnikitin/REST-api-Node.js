@@ -24,10 +24,10 @@ router.route('/:id').get(
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    const user = new User(req.body);
+    const user = await usersService.addUser(req.body);
+    console.log('user', user);
     if (!user) throw new ExtendedError(400, 'Bad request');
-    const result = await usersService.addUser(user);
-    res.json(User.toResponse(result));
+    res.json(User.toResponse(user));
   })
 );
 

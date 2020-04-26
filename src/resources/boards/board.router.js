@@ -13,12 +13,11 @@ router.route('/').get(
 );
 
 router.route('/:id').get(
-  // validatorMiddleware,
+  validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     console.log(req.params);
     const { id } = req.params;
     const board = await boardService.getById(id);
-    console.log('boardIDD', board);
     if (!board) throw new ExtendedError(404, 'Board not found');
     res.json(Board.toResponse(board));
   })

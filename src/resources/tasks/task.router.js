@@ -18,9 +18,7 @@ router.route('/:taskId').get(
   validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
     const { id: boardId, taskId } = req.params;
-    console.log('GETBYID___', boardId, taskId);
     const task = await taskService.getById(boardId, taskId);
-    console.log('taskIDDD', task);
     if (!task) throw new ExtendedError(404, 'Task not found');
     res.json(Task.toResponse(task));
   })
