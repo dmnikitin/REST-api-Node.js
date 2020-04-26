@@ -4,8 +4,8 @@ const uuid = require('uuid');
 const columnSchema = new mongoose.Schema(
   {
     _id: { type: String, default: uuid },
-    title: { type: String, required: false },
-    order: { type: Number, required: false }
+    title: String,
+    order: Number
   },
   { versionKey: false }
 );

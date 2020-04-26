@@ -8,27 +8,27 @@ const Board = require('./board.model');
 router.route('/').get(
   catchErrorsDecorator(async (req, res) => {
     const boards = await boardService.getAll();
-    res.json(boards);
+    res.json(boards.map(Board.toResponse));
   })
 );
 
 router.route('/:id').get(
-  validatorMiddleware,
+  // validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
+    console.log(req.params);
     const { id } = req.params;
     const board = await boardService.getById(id);
+    console.log('boardIDD', board);
     if (!board) throw new ExtendedError(404, 'Board not found');
-    res.json(board);
+    res.json(Board.toResponse(board));
   })
 );
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    // const { columns, title } = req.body;
-    const board = new Board(req.body);
+    const board = await boardService.addBoard(req.body);
     if (!board) throw new ExtendedError(400, 'Bad request');
-    const result = await boardService.addBoard(board);
-    res.json(result);
+    res.json(Board.toResponse(board));
   })
 );
 
@@ -39,9 +39,9 @@ router.route('/:id').put(
       body: update,
       params: { id }
     } = req;
-    const result = await boardService.updateBoard(id, update);
-    if (!result) throw new ExtendedError(400, 'Bad request');
-    res.json(result);
+    const board = await boardService.updateBoard(id, update);
+    if (!board) throw new ExtendedError(400, 'Bad request');
+    res.json(board);
   })
 );
 

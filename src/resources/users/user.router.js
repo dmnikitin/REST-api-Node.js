@@ -24,7 +24,6 @@ router.route('/:id').get(
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    // const { name, login, password } = req.body;
     const user = new User(req.body);
     if (!user) throw new ExtendedError(400, 'Bad request');
     const result = await usersService.addUser(user);

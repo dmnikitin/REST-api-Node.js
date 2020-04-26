@@ -10,29 +10,29 @@ router.route('/').get(
     const boardId = req.params.id;
     const tasks = await taskService.getAll(boardId);
     if (!tasks) throw new ExtendedError(404, 'Bad request');
-    res.json(tasks);
+    res.json(tasks.map(Task.toResponse));
   })
 );
 
 router.route('/:taskId').get(
   validatorMiddleware,
   catchErrorsDecorator(async (req, res) => {
-    const { id, taskId } = req.params;
-    const task = await taskService.getById(id, taskId);
+    const { id: boardId, taskId } = req.params;
+    console.log('GETBYID___', boardId, taskId);
+    const task = await taskService.getById(boardId, taskId);
+    console.log('taskIDDD', task);
     if (!task) throw new ExtendedError(404, 'Task not found');
-    res.json(task);
+    res.json(Task.toResponse(task));
   })
 );
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    // const { title, order, description, userId, columnId } = req.body;
-    const { id: boardId } = req.params;
-    // const newTask = Object.assign({}, req.body, { boardId: req.params.id })
-    const task = new Task(Object.assign({}, req.body, boardId));
+    const task = await taskService.addTask(
+      Object.assign({}, req.body, { boardId: req.params.id })
+    );
     if (!task) throw new ExtendedError(400, 'Bad request');
-    const result = await taskService.addTask(task, boardId);
-    res.json(result);
+    res.json(Task.toResponse(task));
   })
 );
 
@@ -43,9 +43,9 @@ router.route('/:id').put(
       body: update,
       params: { id }
     } = req;
-    const result = await taskService.updateTask(id, update);
-    if (!result) throw new ExtendedError(400, 'Bad request');
-    res.json(result);
+    const task = await taskService.updateTask(id, update);
+    if (!task) throw new ExtendedError(400, 'Bad request');
+    res.json(task);
   })
 );
 

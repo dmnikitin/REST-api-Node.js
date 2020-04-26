@@ -10,7 +10,7 @@ const addUser = user => user.save();
 const updateUser = (id, update) => User.updateOne({ _id: id }, update);
 
 const deleteUser = async id => {
-  const isSuccess = await User.deleteOne({ id });
+  const isSuccess = await User.findByIdAndDelete(id);
   if (isSuccess) {
     await Task.updateMany({ userId: id }, { userId: null });
   }
