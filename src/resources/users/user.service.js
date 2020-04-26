@@ -5,7 +5,7 @@ const getAll = () => User.find({});
 
 const getUserById = id => User.findOne({ _id: id });
 
-const addUser = user => user.save();
+const addUser = user => User.create(user);
 
 const updateUser = (id, update) => User.updateOne({ _id: id }, update);
 
