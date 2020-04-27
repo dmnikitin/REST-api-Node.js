@@ -1,11 +1,11 @@
-const uuid = require('uuid');
+const mongoose = require('mongoose');
 
-class Column {
-  constructor({ id = uuid(), title = 'default column', order = 0 } = {}) {
-    this.id = id;
-    this.title = title;
-    this.order = order;
-  }
-}
+const columnSchema = new mongoose.Schema({
+  id: { type: String, required: true },
+  title: { type: String, required: false },
+  order: { type: Number, required: false }
+});
+
+const Column = mongoose.model('Column', columnSchema);
 
 module.exports = Column;

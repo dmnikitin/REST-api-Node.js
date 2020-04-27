@@ -1,7 +1,7 @@
 const { createLogger, format, transports } = require('winston');
 
 const logger = createLogger({
-  format: format.json(),
+  format: format.prettyPrint(),
   transports: [
     new transports.Console(),
     new transports.File({

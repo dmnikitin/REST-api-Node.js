@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const uuid = require('uuid');
 const usersService = require('./user.service');
 const validatorMiddleware = require('../../middlewares/validator');
 const catchErrorsDecorator = require('../../helpers/error-decorator');
@@ -24,7 +25,13 @@ router.route('/:id').get(
 
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
-    const user = new User(req.body);
+    const { name, login, password } = req.body;
+    const user = new User({
+      id: uuid(),
+      name,
+      login,
+      password
+    });
     if (!user) throw new ExtendedError(400, 'Bad request');
     const result = await usersService.addUser(user);
     res.json(User.toResponse(result));

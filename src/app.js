@@ -2,6 +2,8 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const logger = require('./common/winston-config');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
@@ -10,6 +12,13 @@ const loggerMiddleware = require('./middlewares/logger');
 const errorMidlleware = require('./middlewares/error');
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
+const { MONGO_CONNECTION_STRING } = dotenv.config().parsed;
+
+mongoose.connect(MONGO_CONNECTION_STRING, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false
+});
 
 app.use(express.json());
 
@@ -22,7 +31,6 @@ app.use('/', (req, res, next) => {
   }
   next();
 });
-
 app.use(loggerMiddleware);
 
 app.use('/users', userRouter);

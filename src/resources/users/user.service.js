@@ -1,41 +1,20 @@
-const usersRepo = require('./user.memory.repository');
-const taskService = require('../tasks/task.service');
+const User = require('./user.model');
+const Task = require('../tasks/task.model');
 
-const getAll = () => usersRepo.getAll();
+const getAll = () => User.find({});
 
-const getUserById = id => usersRepo.getUserById(id);
+const getUserById = id => User.findOne({ id });
 
-const addUser = user => usersRepo.addUser(user);
+const addUser = user => user.save();
 
-const updateUser = (id, update) => usersRepo.updateUser(id, update);
+const updateUser = (id, update) => User.findOneAndUpdate({ id }, update);
 
 const deleteUser = async id => {
-  const isSuccess = usersRepo.deleteUser(id);
+  const isSuccess = await User.findOneAndDelete({ id });
   if (isSuccess) {
-    const allTasks = await taskService.getAll();
-    const userTasks = allTasks.filter(task => (task.userId = id));
-    if (userTasks) {
-      await Promise.all(
-        userTasks.map(task => taskService.updateTask(task.id, { userId: null }))
-      );
-    }
+    await Task.updateMany({ userId: id }, { userId: null });
   }
   return isSuccess;
-
-  // try {
-  //   const allTasks = await taskService.getAll();
-  //   const userTasks = allTasks.filter(task => (task.userId = id));
-  //   userTasks.forEach(async task => {
-  //     try {
-  //       await taskService.updateTask(task.id, { userId: null });
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   });
-  //   usersRepo.deleteUser(id);
-  // } catch (err) {
-  //   console.log(err);
-  // }
 };
 
 module.exports = { getAll, getUserById, addUser, updateUser, deleteUser };
