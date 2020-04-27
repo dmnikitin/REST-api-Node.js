@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET_KEY } = require('../common/config');
 
 const authMiddleware = (req, res, next) => {
-  if (req.originalURL === 'login') {
+  if (req.url === '/login' || req.url.startsWith('/doc')) {
     return next();
   }
   if (req.headers.authorization) {
@@ -14,6 +14,7 @@ const authMiddleware = (req, res, next) => {
             success: false,
             error: 'failed to verify token'
           });
+          return;
         }
         req.decoded = decoded;
         return next();
@@ -24,6 +25,7 @@ const authMiddleware = (req, res, next) => {
       success: false,
       message: 'No token provided'
     });
+    return;
   }
 };
 
