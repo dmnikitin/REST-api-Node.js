@@ -25,10 +25,9 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(loggerMiddleware);
-
-app.use('/login', authRouter);
 app.use(authMiddleware);
 
+app.use('/login', authRouter);
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:id/tasks', taskRouter);

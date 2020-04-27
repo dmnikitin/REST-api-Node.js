@@ -9,11 +9,11 @@ router.route('/').post(
     const { login, password } = req.body;
     const user = await authService.checkRegistration(login);
     if (!user) {
-      throw new ExtendedError(403, 'Access forbidden, user not registered');
+      throw new ExtendedError(403, 'Access forbidden');
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new ExtendedError(403, 'Access forbidden, invalid password');
+      throw new ExtendedError(403, 'Access forbidden');
     }
     const token = authService.createToken(login, user._id);
     res.header('Authorization', `Bearer ${token}`).send({ token });
