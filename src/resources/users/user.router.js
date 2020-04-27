@@ -25,7 +25,6 @@ router.route('/:id').get(
 router.route('/').post(
   catchErrorsDecorator(async (req, res) => {
     const user = await usersService.addUser(req.body);
-    console.log('user', user);
     if (!user) throw new ExtendedError(400, 'Bad request');
     res.json(User.toResponse(user));
   })

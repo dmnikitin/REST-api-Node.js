@@ -3,7 +3,7 @@ const Task = require('../tasks/task.model');
 
 const getAll = () => User.find({});
 
-const getUserById = id => User.findOne({ _id: id });
+const getUserById = id => User.findById(id);
 
 const addUser = user => User.create(user);
 
